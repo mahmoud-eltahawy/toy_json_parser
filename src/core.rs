@@ -69,12 +69,13 @@ pub fn parse_array(input: &str) -> IResult<&str, JsonValue> {
 }
 
 pub fn parse_object(input: &str) -> IResult<&str, JsonValue> {
+    let open = delimited(multispace0, tag("{"), multispace0);
+    let close = delimited(multispace0, tag("}"), multispace0);
     let colon = delimited(multispace0, tag(":"), multispace0);
     let delim = delimited(multispace0, tag(","), multispace0);
     let pair_parser = separated_pair(parse_key_string, colon, parse_json_value);
 
-    let (rest, arr) =
-        delimited(tag("{"), separated_list0(delim, pair_parser), tag("}")).parse(input)?;
+    let (rest, arr) = delimited(open, separated_list0(delim, pair_parser), close).parse(input)?;
     Ok((rest, JsonValue::Object(arr)))
 }
 
