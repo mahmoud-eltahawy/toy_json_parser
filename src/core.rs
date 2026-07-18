@@ -22,16 +22,7 @@ pub enum JsonValue {
 }
 
 pub fn parse(input: &str) -> Result<JsonValue, String> {
-    match alt((
-        parse_null,
-        parse_bool,
-        parse_number,
-        parse_json_string,
-        parse_array,
-        parse_object,
-    ))
-    .parse(input)
-    {
+    match parse_json_value(input) {
         Ok((_, val)) => Ok(val),
         Err(err) => match err {
             nom::Err::Error(e) | nom::Err::Failure(e) => Err(convert_error(input, e)),
