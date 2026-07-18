@@ -50,12 +50,7 @@ pub fn parse_key_string(input: &str) -> IResult<&str, String> {
 }
 
 pub fn parse_json_string(input: &str) -> IResult<&str, JsonValue> {
-    let mut open = pair(multispace0, tag("\""));
-    let mut close = pair(tag("\""), multispace0);
-    let (rest, _) = open.parse(input)?;
-    let (rest, result) = take_until("\"").parse(rest)?;
-    let (rest, _) = close.parse(rest)?;
-    Ok((rest, JsonValue::String(result.to_string())))
+    parse_key_string(input).map(|(rest, s)| (rest, JsonValue::String(s)))
 }
 
 // let separator = delimited(tag(" "), tag(","), tag(" "));
